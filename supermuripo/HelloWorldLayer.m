@@ -6,12 +6,11 @@
 //  Copyright __MyCompanyName__ 2013年. All rights reserved.
 //
 
-
-// Import the interfaces
 #import "HelloWorldLayer.h"
-
-// Needed to obtain the Navigation Controller
 #import "AppDelegate.h"
+
+static const int kTileMapNode = 1;
+static const int kMarioSpeed = 2;
 
 #pragma mark - HelloWorldLayer
 
@@ -36,20 +35,12 @@
 	return scene;
 }
 
-static const int TileMapNode = 1;
-
 -(id) init
 {
 	if( (self=[super init]) ) {
 		
         CCTMXTiledMap* tileMap = [CCTMXTiledMap tiledMapWithTMXFile:@"mario.tmx"];
-        [self addChild:tileMap z:-1 tag:TileMapNode];
-        /*
-        CGSize winSize = [CCDirector sharedDirector].winSize;
-        CCSprite *controlledSprite  = [CCSprite spriteWithFile:@"Joystick_norm.png"];
-        controlledSprite.position   = ccp(winSize.width/2, winSize.height/2);
-        [self addChild:controlledSprite];
-        */
+        [self addChild:tileMap z:-1 tag:kTileMapNode];
         
         //Joystick
         _joystick	= [ZJoystick joystickNormalSpriteFile:@"JoystickContainer_norm.png" selectedSpriteFile:@"JoystickContainer_trans.png" controllerSpriteFile:@"Joystick_norm.png"];
@@ -98,17 +89,26 @@ static const int TileMapNode = 1;
 #pragma mark - //JoystickDelegate
 
 -(void)joystickControlBegan {
-    NSLog(@"begin");
+//    NSLog(@"begin");
 }
 -(void)joystickControlMoved {
-    NSLog(@"move");
+//    NSLog(@"move");
 }
 -(void)joystickControlEnded {
-    NSLog(@"end");
+//    NSLog(@"end");
 }
 
 -(void)joystickControlDidUpdate:(id)joystick toXSpeedRatio:(CGFloat)xSpeedRatio toYSpeedRatio:(CGFloat)ySpeedRatio {
-    
+    NSLog(@"x=%f, y=%f", xSpeedRatio, ySpeedRatio);
+    CCNode* map = [self getChildByTag:kTileMapNode];
+    float x = map.position.x - (int)(xSpeedRatio * kMarioSpeed);
+    float width = map.contentSize.width;
+    float screenWidth = [CCDirector sharedDirector].winSize.width;
+
+    if (x <= 0.0 && (-1 * (width - screenWidth)) <= x) {
+        map.position = ccp(x, map.position.y);
+        CCLOG(@"%@", NSStringFromCGPoint(map.position));
+    }
 }
 
 @end
