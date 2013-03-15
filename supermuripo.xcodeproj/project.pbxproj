@@ -133,6 +133,17 @@
 		8A22D39616F20A8A00536DDE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A22D39516F20A8A00536DDE /* AppDelegate.m */; };
 		8A22D39916F20A8A00536DDE /* HelloWorldLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A22D39816F20A8A00536DDE /* HelloWorldLayer.m */; };
 		8A22D39C16F20A8A00536DDE /* IntroLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A22D39B16F20A8A00536DDE /* IntroLayer.m */; };
+		8A22D3A416F20AF900536DDE /* mario.tmx in Resources */ = {isa = PBXBuildFile; fileRef = 8A22D3A216F20AF900536DDE /* mario.tmx */; };
+		8A22D3A516F20AF900536DDE /* SMB-Tiles.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A22D3A316F20AF900536DDE /* SMB-Tiles.png */; };
+		8A22D66E16F2167D00536DDE /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A22D66516F2167D00536DDE /* background.png */; };
+		8A22D66F16F2167D00536DDE /* Joystick_norm.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A22D66616F2167D00536DDE /* Joystick_norm.png */; };
+		8A22D67016F2167D00536DDE /* JoystickContainer_norm.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A22D66716F2167D00536DDE /* JoystickContainer_norm.png */; };
+		8A22D67116F2167D00536DDE /* JoystickContainer_trans.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A22D66816F2167D00536DDE /* JoystickContainer_trans.png */; };
+		8A22D67216F2167D00536DDE /* LICENSE.zjoystick in Resources */ = {isa = PBXBuildFile; fileRef = 8A22D66916F2167D00536DDE /* LICENSE.zjoystick */; };
+		8A22D67316F2167D00536DDE /* MyJoystick.zip in Resources */ = {isa = PBXBuildFile; fileRef = 8A22D66A16F2167D00536DDE /* MyJoystick.zip */; };
+		8A22D67416F2167D00536DDE /* README in Resources */ = {isa = PBXBuildFile; fileRef = 8A22D66B16F2167D00536DDE /* README */; };
+		8A22D67516F2167D00536DDE /* ZJoystick.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A22D66D16F2167D00536DDE /* ZJoystick.m */; };
+		8A22D67716F2177800536DDE /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A22D67616F2177800536DDE /* Default-568h@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -398,6 +409,18 @@
 		8A22D39816F20A8A00536DDE /* HelloWorldLayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HelloWorldLayer.m; sourceTree = "<group>"; };
 		8A22D39A16F20A8A00536DDE /* IntroLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntroLayer.h; sourceTree = "<group>"; };
 		8A22D39B16F20A8A00536DDE /* IntroLayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IntroLayer.m; sourceTree = "<group>"; };
+		8A22D3A216F20AF900536DDE /* mario.tmx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = mario.tmx; path = Resources/mario.tmx; sourceTree = "<group>"; };
+		8A22D3A316F20AF900536DDE /* SMB-Tiles.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "SMB-Tiles.png"; path = "Resources/SMB-Tiles.png"; sourceTree = "<group>"; };
+		8A22D66516F2167D00536DDE /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background.png; sourceTree = "<group>"; };
+		8A22D66616F2167D00536DDE /* Joystick_norm.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Joystick_norm.png; sourceTree = "<group>"; };
+		8A22D66716F2167D00536DDE /* JoystickContainer_norm.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = JoystickContainer_norm.png; sourceTree = "<group>"; };
+		8A22D66816F2167D00536DDE /* JoystickContainer_trans.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = JoystickContainer_trans.png; sourceTree = "<group>"; };
+		8A22D66916F2167D00536DDE /* LICENSE.zjoystick */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.zjoystick; sourceTree = "<group>"; };
+		8A22D66A16F2167D00536DDE /* MyJoystick.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = MyJoystick.zip; sourceTree = "<group>"; };
+		8A22D66B16F2167D00536DDE /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		8A22D66C16F2167D00536DDE /* ZJoystick.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZJoystick.h; sourceTree = "<group>"; };
+		8A22D66D16F2167D00536DDE /* ZJoystick.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZJoystick.m; sourceTree = "<group>"; };
+		8A22D67616F2177800536DDE /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -423,6 +446,7 @@
 		8A22D1FE16F20A8800536DDE = {
 			isa = PBXGroup;
 			children = (
+				8A22D67616F2177800536DDE /* Default-568h@2x.png */,
 				8A22D21C16F20A8800536DDE /* supermuripo */,
 				8A22D20916F20A8800536DDE /* Frameworks */,
 				8A22D20816F20A8800536DDE /* Products */,
@@ -472,6 +496,8 @@
 		8A22D21D16F20A8800536DDE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				8A22D3A216F20AF900536DDE /* mario.tmx */,
+				8A22D3A316F20AF900536DDE /* SMB-Tiles.png */,
 				8A22D21E16F20A8800536DDE /* Default.png */,
 				8A22D22016F20A8800536DDE /* Default-Landscape~ipad.png */,
 				8A22D22216F20A8800536DDE /* fps_images.png */,
@@ -495,6 +521,7 @@
 				8A22D34E16F20A8900536DDE /* LICENSE_cocos2d.txt */,
 				8A22D35D16F20A8A00536DDE /* LICENSE_CocosDenshion.txt */,
 				8A22D38F16F20A8A00536DDE /* LICENSE_Kazmath.txt */,
+				8A22D66416F2167D00536DDE /* ZJoystick-master */,
 				8A22D23816F20A8800536DDE /* cocos2d */,
 				8A22D34F16F20A8900536DDE /* CocosDenshion */,
 				8A22D35E16F20A8A00536DDE /* kazmath */,
@@ -832,6 +859,23 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		8A22D66416F2167D00536DDE /* ZJoystick-master */ = {
+			isa = PBXGroup;
+			children = (
+				8A22D66516F2167D00536DDE /* background.png */,
+				8A22D66616F2167D00536DDE /* Joystick_norm.png */,
+				8A22D66716F2167D00536DDE /* JoystickContainer_norm.png */,
+				8A22D66816F2167D00536DDE /* JoystickContainer_trans.png */,
+				8A22D66916F2167D00536DDE /* LICENSE.zjoystick */,
+				8A22D66A16F2167D00536DDE /* MyJoystick.zip */,
+				8A22D66B16F2167D00536DDE /* README */,
+				8A22D66C16F2167D00536DDE /* ZJoystick.h */,
+				8A22D66D16F2167D00536DDE /* ZJoystick.m */,
+			);
+			name = "ZJoystick-master";
+			path = "libs/ZJoystick-master";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -895,6 +939,16 @@
 				8A22D23316F20A8800536DDE /* Icon@2x.png in Resources */,
 				8A22D23616F20A8800536DDE /* iTunesArtwork in Resources */,
 				8A22D37416F20A8A00536DDE /* ChangeLog in Resources */,
+				8A22D3A416F20AF900536DDE /* mario.tmx in Resources */,
+				8A22D3A516F20AF900536DDE /* SMB-Tiles.png in Resources */,
+				8A22D66E16F2167D00536DDE /* background.png in Resources */,
+				8A22D66F16F2167D00536DDE /* Joystick_norm.png in Resources */,
+				8A22D67016F2167D00536DDE /* JoystickContainer_norm.png in Resources */,
+				8A22D67116F2167D00536DDE /* JoystickContainer_trans.png in Resources */,
+				8A22D67216F2167D00536DDE /* LICENSE.zjoystick in Resources */,
+				8A22D67316F2167D00536DDE /* MyJoystick.zip in Resources */,
+				8A22D67416F2167D00536DDE /* README in Resources */,
+				8A22D67716F2177800536DDE /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1009,6 +1063,7 @@
 				8A22D39616F20A8A00536DDE /* AppDelegate.m in Sources */,
 				8A22D39916F20A8A00536DDE /* HelloWorldLayer.m in Sources */,
 				8A22D39C16F20A8A00536DDE /* IntroLayer.m in Sources */,
+				8A22D67516F2167D00536DDE /* ZJoystick.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

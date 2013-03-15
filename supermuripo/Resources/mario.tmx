@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="100" height="20" tilewidth="16" tileheight="16">
+ <tileset firstgid="1" name="SMB-Tiles" tilewidth="16" tileheight="16" spacing="1">
+  <image source="SMB-Tiles.png" width="220" height="186"/>
+  <tile id="0">
+   <properties>
+    <property name="isGround" value="1"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="MainLayer" width="100" height="20">
+  <data encoding="base64" compression="zlib">
+   eJzt08EJgDAMRuF0Dh1AZ+r+e1gQb1ZTm2Ag7/BdpGD9H1YRqQAAAAAAAABSKgHugLPD5e+7ZFeEHjO73T236ODRY2nWANt5tej1GN2x18K6x9bsAfbz6PDWQ7PlU4csPb5+r3Yv7aaaFpb/2ei7Rs5bnbNgvcmMAxiwjYY=
+  </data>
+ </layer>
+</map>

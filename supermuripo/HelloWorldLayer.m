@@ -16,7 +16,9 @@
 #pragma mark - HelloWorldLayer
 
 // HelloWorldLayer implementation
-@implementation HelloWorldLayer
+@implementation HelloWorldLayer {
+    ZJoystick *_joystick;
+}
 
 // Helper class method that creates a Scene with the HelloWorldLayer as the only child.
 +(CCScene *) scene
@@ -34,72 +36,29 @@
 	return scene;
 }
 
-// on "init" you need to initialize your instance
+static const int TileMapNode = 1;
+
 -(id) init
 {
-	// always call "super" init
-	// Apple recommends to re-assign "self" with the "super's" return value
 	if( (self=[super init]) ) {
 		
-		// create and initialize a Label
-		CCLabelTTF *label = [CCLabelTTF labelWithString:@"Hello World" fontName:@"Marker Felt" fontSize:64];
-
-		// ask director for the window size
-		CGSize size = [[CCDirector sharedDirector] winSize];
-	
-		// position the label on the center of the screen
-		label.position =  ccp( size.width /2 , size.height/2 );
-		
-		// add the label as a child to this Layer
-		[self addChild: label];
-		
-		
-		
-		//
-		// Leaderboards and Achievements
-		//
-		
-		// Default font size will be 28 points.
-		[CCMenuItemFont setFontSize:28];
-		
-		// Achievement Menu Item using blocks
-		CCMenuItem *itemAchievement = [CCMenuItemFont itemWithString:@"Achievements" block:^(id sender) {
-			
-			
-			GKAchievementViewController *achivementViewController = [[GKAchievementViewController alloc] init];
-			achivementViewController.achievementDelegate = self;
-			
-			AppController *app = (AppController*) [[UIApplication sharedApplication] delegate];
-			
-			[[app navController] presentModalViewController:achivementViewController animated:YES];
-			
-			[achivementViewController release];
-		}
-									   ];
-
-		// Leaderboard Menu Item using blocks
-		CCMenuItem *itemLeaderboard = [CCMenuItemFont itemWithString:@"Leaderboard" block:^(id sender) {
-			
-			
-			GKLeaderboardViewController *leaderboardViewController = [[GKLeaderboardViewController alloc] init];
-			leaderboardViewController.leaderboardDelegate = self;
-			
-			AppController *app = (AppController*) [[UIApplication sharedApplication] delegate];
-			
-			[[app navController] presentModalViewController:leaderboardViewController animated:YES];
-			
-			[leaderboardViewController release];
-		}
-									   ];
-		
-		CCMenu *menu = [CCMenu menuWithItems:itemAchievement, itemLeaderboard, nil];
-		
-		[menu alignItemsHorizontallyWithPadding:20];
-		[menu setPosition:ccp( size.width/2, size.height/2 - 50)];
-		
-		// Add the menu to the layer
-		[self addChild:menu];
-
+        CCTMXTiledMap* tileMap = [CCTMXTiledMap tiledMapWithTMXFile:@"mario.tmx"];
+        [self addChild:tileMap z:-1 tag:TileMapNode];
+        /*
+        CGSize winSize = [CCDirector sharedDirector].winSize;
+        CCSprite *controlledSprite  = [CCSprite spriteWithFile:@"Joystick_norm.png"];
+        controlledSprite.position   = ccp(winSize.width/2, winSize.height/2);
+        [self addChild:controlledSprite];
+        */
+        
+        //Joystick
+        _joystick	= [ZJoystick joystickNormalSpriteFile:@"JoystickContainer_norm.png" selectedSpriteFile:@"JoystickContainer_trans.png" controllerSpriteFile:@"Joystick_norm.png"];
+        _joystick.position	= ccp(_joystick.contentSize.width/2, _joystick.contentSize.height/2);
+        _joystick.delegate	= self;				//Joystick Delegate
+        //_joystick.controlledObject  = controlledSprite;     //we set our controlled object which the blue circle
+        _joystick.speedRatio         = 2.0f;                //we set speed ratio, movement speed of blue circle once controlled to any direction
+        _joystick.joystickRadius     = 50.0f;               //Added in v1.2
+        [self addChild:_joystick];
 	}
 	return self;
 }
@@ -115,6 +74,13 @@
 	[super dealloc];
 }
 
+- (CGPoint)locationFromTouches:(NSSet*)touches {
+    UITouch* touch = [touches anyObject];
+    CGPoint touchLocation = [touch locationInView:[touch view]];
+    return [[CCDirector sharedDirector] convertToGL:touchLocation];
+}
+
+
 #pragma mark GameKit delegate
 
 -(void) achievementViewControllerDidFinish:(GKAchievementViewController *)viewController
@@ -128,4 +94,21 @@
 	AppController *app = (AppController*) [[UIApplication sharedApplication] delegate];
 	[[app navController] dismissModalViewControllerAnimated:YES];
 }
+
+#pragma mark - //JoystickDelegate
+
+-(void)joystickControlBegan {
+    NSLog(@"begin");
+}
+-(void)joystickControlMoved {
+    NSLog(@"move");
+}
+-(void)joystickControlEnded {
+    NSLog(@"end");
+}
+
+-(void)joystickControlDidUpdate:(id)joystick toXSpeedRatio:(CGFloat)xSpeedRatio toYSpeedRatio:(CGFloat)ySpeedRatio {
+    
+}
+
 @end
