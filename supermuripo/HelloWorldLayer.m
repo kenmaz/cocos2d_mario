@@ -8,15 +8,21 @@
 
 #import "HelloWorldLayer.h"
 #import "AppDelegate.h"
+#import "Mario.h"
+#import "JumpButton.h"
 
 static const int kTileMapNode = 1;
+static const int kMarioNode = 2;
+
 static const int kMarioSpeed = 2;
+static const int kSpriteSize = 16;
 
 #pragma mark - HelloWorldLayer
 
 // HelloWorldLayer implementation
 @implementation HelloWorldLayer {
     ZJoystick *_joystick;
+    CCSprite* _mario;
 }
 
 // Helper class method that creates a Scene with the HelloWorldLayer as the only child.
@@ -39,19 +45,45 @@ static const int kMarioSpeed = 2;
 {
 	if( (self=[super init]) ) {
 		
+        //背景タイル
         CCTMXTiledMap* tileMap = [CCTMXTiledMap tiledMapWithTMXFile:@"mario.tmx"];
         [self addChild:tileMap z:-1 tag:kTileMapNode];
+
+        //マリオ
+        Mario* mario = [[Mario alloc] initwithPosition:ccp([CCDirector sharedDirector].winSize.width / 2, kSpriteSize * 4.5)];
+        [self addChild:mario z:100 tag:kMarioNode];
         
-        //Joystick
-        _joystick	= [ZJoystick joystickNormalSpriteFile:@"JoystickContainer_norm.png" selectedSpriteFile:@"JoystickContainer_trans.png" controllerSpriteFile:@"Joystick_norm.png"];
-        _joystick.position	= ccp(_joystick.contentSize.width/2, _joystick.contentSize.height/2);
-        _joystick.delegate	= self;				//Joystick Delegate
-        //_joystick.controlledObject  = controlledSprite;     //we set our controlled object which the blue circle
-        _joystick.speedRatio         = 2.0f;                //we set speed ratio, movement speed of blue circle once controlled to any direction
-        _joystick.joystickRadius     = 50.0f;               //Added in v1.2
+        //ジョイスティック
+        _joystick = [ZJoystick joystickNormalSpriteFile:@"cursor.png" selectedSpriteFile:@"cursor.png" controllerSpriteFile:@"Joystick_norm.png"];
+        _joystick.position = ccp(_joystick.contentSize.width/2, _joystick.contentSize.height/2);
+        _joystick.delegate = self;
+        _joystick.speedRatio = 2.0f;
+        _joystick.joystickRadius = 100.0f;
         [self addChild:_joystick];
+        
+        //ジャンプボタン
+        JumpButton* jumpButton = [JumpButton itemWithNormalImage:@"button.png" selectedImage:@"button.png" target:self selector:@selector(starButtonTapped:)];
+        float screenWidth = [CCDirector sharedDirector].winSize.width;
+        jumpButton.position = ccp(screenWidth - jumpButton.contentSize.width / 2, jumpButton.contentSize.height / 2);
+        
+        __block Mario* targetMario = mario;
+        jumpButton.beginTouchBlock = ^{
+            NSLog(@"begin");
+            [targetMario jumpWithButtonTouchHolding:YES];
+        };
+        jumpButton.endTouchBlock = ^{
+            NSLog(@"end");
+            [targetMario jumpWithButtonTouchHolding:NO];
+        };
+        CCMenu *buttonBase = [CCMenu menuWithItems:jumpButton, nil];
+        buttonBase.position = CGPointZero;
+        [self addChild:buttonBase];
 	}
 	return self;
+}
+
+- (void)starButtonTapped:(id)sender {
+    NSLog(@"button");
 }
 
 // on "dealloc" you need to release all your retained objects
@@ -71,7 +103,6 @@ static const int kMarioSpeed = 2;
     return [[CCDirector sharedDirector] convertToGL:touchLocation];
 }
 
-
 #pragma mark GameKit delegate
 
 -(void) achievementViewControllerDidFinish:(GKAchievementViewController *)viewController
@@ -88,27 +119,72 @@ static const int kMarioSpeed = 2;
 
 #pragma mark - //JoystickDelegate
 
+//ジョイスティック押した
 -(void)joystickControlBegan {
-//    NSLog(@"begin");
+    Mario* mario = (Mario*)[self getChildByTag:kMarioNode];
+    [mario startWalk];
 }
--(void)joystickControlMoved {
-//    NSLog(@"move");
-}
+
+//ジョイスティック離した
 -(void)joystickControlEnded {
-//    NSLog(@"end");
+    Mario* mario = (Mario*)[self getChildByTag:kMarioNode];
+    [mario startStand];
 }
 
+//ジョイスティック操作
 -(void)joystickControlDidUpdate:(id)joystick toXSpeedRatio:(CGFloat)xSpeedRatio toYSpeedRatio:(CGFloat)ySpeedRatio {
-    NSLog(@"x=%f, y=%f", xSpeedRatio, ySpeedRatio);
+    
+    Mario* mario = (Mario*)[self getChildByTag:kMarioNode];
     CCNode* map = [self getChildByTag:kTileMapNode];
-    float x = map.position.x - (int)(xSpeedRatio * kMarioSpeed);
-    float width = map.contentSize.width;
+    
+    [mario walking:xSpeedRatio];
+    
+    float mapWidth = map.contentSize.width;
     float screenWidth = [CCDirector sharedDirector].winSize.width;
-
-    if (x <= 0.0 && (-1 * (width - screenWidth)) <= x) {
-        map.position = ccp(x, map.position.y);
-        CCLOG(@"%@", NSStringFromCGPoint(map.position));
+    float centerX = screenWidth / 2;
+    float mapRightEdgeX = -1 * (mapWidth - screenWidth);
+    float mapLeftEdgeX = 0.0;
+    
+    CCLOG(@"speed = %f, map.pos.x = %f", xSpeedRatio, map.position.x);
+    
+    if ((map.position.x == mapLeftEdgeX  && xSpeedRatio < 0) ||             //map左端まで表示されていて,左に移動
+        (map.position.x == mapLeftEdgeX  && mario.position.x < centerX) ||  //map左端まで表示されていて,マリオが左側にいる
+        (map.position.x == mapRightEdgeX && 0 < xSpeedRatio) ||             //map右端まで表示されていて、右に移動
+        (map.position.x == mapRightEdgeX && centerX < mario.position.x))    //map右端まで表示されていて、マリオが右側にいる
+    {
+        //キャラを動かす
+        float mx = mario.position.x + (int)(xSpeedRatio * kMarioSpeed);
+        
+        //画面外にでないように
+        if (0 <= mx && mx <= screenWidth) {
+            NSLog(@"mx=%f, centerX=%f, mapX=%f", mx, centerX, map.position.x);
+            
+            if ((map.position.x == mapLeftEdgeX && 0 < xSpeedRatio && centerX < mx) ||
+                (map.position.x == mapRightEdgeX && xSpeedRatio < 0 && mx < centerX)) {
+                //センターを越えないように
+                mario.position = ccp(centerX, mario.position.y);
+            } else {
+                mario.position = ccp(mx, mario.position.y);
+            }
+        }
+    } else {
+        //マップを動かす
+        float newMapX = map.position.x - (int)(xSpeedRatio * kMarioSpeed);
+        
+        //スクロールしすぎて画面外が表示されないように
+        if (mapLeftEdgeX < newMapX) {
+            newMapX = mapLeftEdgeX;
+        }
+        if (newMapX < mapRightEdgeX) {
+            newMapX = mapRightEdgeX;
+        }
+        map.position = ccp(newMapX, map.position.y);
+        CCLOG(@"map x:%f", map.position.x);
     }
 }
+
+
+
+
 
 @end

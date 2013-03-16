@@ -42,6 +42,11 @@
 
 	// attach the openglView to the director
 	[director_ setView:glView];
+    
+    // multi touch enabled
+    // シーン移行中の場合は再コールされても応答しないようなコードを追加しておかないとシーンの移行が正しく終わらないうちに次への移行が呼ばれたりして落ちる場合があります。
+    // http://xionchannel.blogspot.jp/2011/04/cocos2d.html
+    [glView setMultipleTouchEnabled:YES];
 
 	// for rotation and other messages
 	[director_ setDelegate:self];

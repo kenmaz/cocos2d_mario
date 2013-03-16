@@ -144,6 +144,11 @@
 		8A22D67416F2167D00536DDE /* README in Resources */ = {isa = PBXBuildFile; fileRef = 8A22D66B16F2167D00536DDE /* README */; };
 		8A22D67516F2167D00536DDE /* ZJoystick.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A22D66D16F2167D00536DDE /* ZJoystick.m */; };
 		8A22D67716F2177800536DDE /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A22D67616F2177800536DDE /* Default-568h@2x.png */; };
+		8A568AC916F40B4800915D6F /* mario.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A568AC816F40B4800915D6F /* mario.png */; };
+		8A568ACC16F42D1C00915D6F /* Mario.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A568ACB16F42D1C00915D6F /* Mario.m */; };
+		8A568ACF16F43C5F00915D6F /* JumpButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A568ACE16F43C5F00915D6F /* JumpButton.m */; };
+		8A568AD116F45B3600915D6F /* button.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A568AD016F45B3600915D6F /* button.png */; };
+		8A568AD316F45E2700915D6F /* cursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A568AD216F45E2700915D6F /* cursor.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -421,6 +426,13 @@
 		8A22D66C16F2167D00536DDE /* ZJoystick.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZJoystick.h; sourceTree = "<group>"; };
 		8A22D66D16F2167D00536DDE /* ZJoystick.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZJoystick.m; sourceTree = "<group>"; };
 		8A22D67616F2177800536DDE /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		8A568AC816F40B4800915D6F /* mario.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = mario.png; path = Resources/mario.png; sourceTree = "<group>"; };
+		8A568ACA16F42D1C00915D6F /* Mario.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mario.h; sourceTree = "<group>"; };
+		8A568ACB16F42D1C00915D6F /* Mario.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mario.m; sourceTree = "<group>"; };
+		8A568ACD16F43C5F00915D6F /* JumpButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JumpButton.h; sourceTree = "<group>"; };
+		8A568ACE16F43C5F00915D6F /* JumpButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JumpButton.m; sourceTree = "<group>"; };
+		8A568AD016F45B3600915D6F /* button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = button.png; path = Resources/button.png; sourceTree = "<group>"; };
+		8A568AD216F45E2700915D6F /* cursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cursor.png; path = Resources/cursor.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -486,6 +498,10 @@
 				8A22D39816F20A8A00536DDE /* HelloWorldLayer.m */,
 				8A22D39A16F20A8A00536DDE /* IntroLayer.h */,
 				8A22D39B16F20A8A00536DDE /* IntroLayer.m */,
+				8A568ACA16F42D1C00915D6F /* Mario.h */,
+				8A568ACB16F42D1C00915D6F /* Mario.m */,
+				8A568ACD16F43C5F00915D6F /* JumpButton.h */,
+				8A568ACE16F43C5F00915D6F /* JumpButton.m */,
 				8A22D21D16F20A8800536DDE /* Resources */,
 				8A22D23716F20A8800536DDE /* libs */,
 				8A22D39016F20A8A00536DDE /* Supporting Files */,
@@ -496,6 +512,9 @@
 		8A22D21D16F20A8800536DDE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				8A568AD216F45E2700915D6F /* cursor.png */,
+				8A568AD016F45B3600915D6F /* button.png */,
+				8A568AC816F40B4800915D6F /* mario.png */,
 				8A22D3A216F20AF900536DDE /* mario.tmx */,
 				8A22D3A316F20AF900536DDE /* SMB-Tiles.png */,
 				8A22D21E16F20A8800536DDE /* Default.png */,
@@ -949,6 +968,9 @@
 				8A22D67316F2167D00536DDE /* MyJoystick.zip in Resources */,
 				8A22D67416F2167D00536DDE /* README in Resources */,
 				8A22D67716F2177800536DDE /* Default-568h@2x.png in Resources */,
+				8A568AC916F40B4800915D6F /* mario.png in Resources */,
+				8A568AD116F45B3600915D6F /* button.png in Resources */,
+				8A568AD316F45E2700915D6F /* cursor.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1064,6 +1086,8 @@
 				8A22D39916F20A8A00536DDE /* HelloWorldLayer.m in Sources */,
 				8A22D39C16F20A8A00536DDE /* IntroLayer.m in Sources */,
 				8A22D67516F2167D00536DDE /* ZJoystick.m in Sources */,
+				8A568ACC16F42D1C00915D6F /* Mario.m in Sources */,
+				8A568ACF16F43C5F00915D6F /* JumpButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1167,6 +1191,7 @@
 				8A22D3A116F20A8A00536DDE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
