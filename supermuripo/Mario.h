@@ -19,6 +19,7 @@ typedef enum {
 @interface Mario : CCSprite
 
 @property Direction direction;
+@property CCTMXTiledMap* map;
 
 - (id)initwithPosition:(CGPoint)position;
 - (void)jumpWithButtonTouchHolding:(BOOL)buttonTouchHolding;
@@ -27,5 +28,5 @@ typedef enum {
 - (void)startWalk;
 - (void)walking:(float)speedRatio;
 - (void)startJump;
-- (void)moveToXSpeedRatio:(CGFloat)xSpeedRatio toYSpeedRatio:(CGFloat)ySpeedRatio withMap:(CCTMXTiledMap*)map;
+- (void)moveToXSpeedRatio:(CGFloat)xSpeedRatio toYSpeedRatio:(CGFloat)ySpeedRatio;
 @end

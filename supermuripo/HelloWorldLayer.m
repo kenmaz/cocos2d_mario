@@ -54,6 +54,7 @@ static const int kDebugNode = 3;
 
         //マリオ
         _mario = [[Mario alloc] initwithPosition:ccp([CCDirector sharedDirector].winSize.width / 2, kSpriteSize * 4.5)];
+        _mario.map = _map;
         [self addChild:_mario z:100 tag:kMarioNode];
         
         //ジョイスティック
@@ -96,6 +97,7 @@ static const int kDebugNode = 3;
 }
 
 - (void)update:(ccTime)delta {
+    _debugLabel.string = [NSString stringWithFormat:@"mario=%@", NSStringFromCGPoint(_mario.position)];
 }
 
 - (void)starButtonTapped:(id)sender {
@@ -147,7 +149,7 @@ static const int kDebugNode = 3;
 
 //ジョイスティック操作
 -(void)joystickControlDidUpdate:(id)joystick toXSpeedRatio:(CGFloat)xSpeedRatio toYSpeedRatio:(CGFloat)ySpeedRatio {
-    [_mario moveToXSpeedRatio:xSpeedRatio toYSpeedRatio:ySpeedRatio withMap:_map];    
+    [_mario moveToXSpeedRatio:xSpeedRatio toYSpeedRatio:ySpeedRatio];
 }
 
 
