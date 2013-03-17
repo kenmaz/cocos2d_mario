@@ -18,6 +18,8 @@ static int kActionTagJump = 2;
 
 static const int kSpriteSpace = 1;
 
+static const int kMarioSpeed = 2;
+
 //ジャンプした瞬間に加わる力
 static const float kJumpForceDefault = 0.7;
 //ジャンプ中に加わる力
@@ -34,6 +36,8 @@ static const float kJumpForceJumping = -0.7f;
     
     //スタート地点でのy位置
     CGFloat _baseY;
+    
+    CCSprite* _debugLastSprite;
 }
 
 - (id)initwithPosition:(CGPoint)position {
@@ -157,5 +161,126 @@ static const float kJumpForceJumping = -0.7f;
     
     _prevY = tempY;
 }
+
+- (void)moveToXSpeedRatio:(CGFloat)xSpeedRatio toYSpeedRatio:(CGFloat)ySpeedRatio withMap:(CCTMXTiledMap*)map {
+    
+    [self walking:xSpeedRatio];
+    
+    float mapWidth = map.contentSize.width;
+    float screenWidth = [CCDirector sharedDirector].winSize.width;
+    float centerX = screenWidth / 2;
+    float mapRightEdgeX = -1 * (mapWidth - screenWidth);
+    float mapLeftEdgeX = 0.0;
+    
+    //CCLOG(@"speed = %f, map.pos.x = %f", xSpeedRatio, map.position.x);
+    
+    if ((map.position.x == mapLeftEdgeX  && xSpeedRatio < 0) ||             //map左端まで表示されていて,左に移動
+        (map.position.x == mapLeftEdgeX  && self.position.x < centerX) ||  //map左端まで表示されていて,マリオが左側にいる
+        (map.position.x == mapRightEdgeX && 0 < xSpeedRatio) ||             //map右端まで表示されていて、右に移動
+        (map.position.x == mapRightEdgeX && centerX < self.position.x))    //map右端まで表示されていて、マリオが右側にいる
+    {
+        //キャラを動かす
+        float mx = self.position.x + (int)(xSpeedRatio * kMarioSpeed);
+        
+        //画面外にでないように
+        if (0 <= mx && mx <= screenWidth) {
+            NSLog(@"mx=%f, centerX=%f, mapX=%f", mx, centerX, map.position.x);
+            
+            CGPoint nextPos;
+            
+            if ((map.position.x == mapLeftEdgeX && 0 < xSpeedRatio && centerX < mx) ||
+                (map.position.x == mapRightEdgeX && xSpeedRatio < 0 && mx < centerX)) {
+                //センターを越えないように
+                nextPos = ccp(centerX, self.position.y);
+            } else {
+                nextPos = ccp(mx, self.position.y);
+            }
+            if ([self isCollisionWithNextMarioPos:nextPos nextMapPos:map.position withMap:map] == NO) {
+                self.position = nextPos;
+            } else {
+                CCLOG(@"map can't move");
+            }
+        }
+    } else {
+        //マップを動かす
+        float newMapX = map.position.x - (int)(xSpeedRatio * kMarioSpeed);
+        
+        //スクロールしすぎて画面外が表示されないように
+        if (mapLeftEdgeX < newMapX) {
+            newMapX = mapLeftEdgeX;
+        }
+        if (newMapX < mapRightEdgeX) {
+            newMapX = mapRightEdgeX;
+        }
+        CGPoint nextPos = ccp(newMapX, map.position.y);
+        //CCLOG(@"map x:%f", map.position.x);
+        
+        if ([self isCollisionWithNextMarioPos:self.position nextMapPos:nextPos withMap:map] == NO) {
+            map.position = nextPos;
+        } else {
+            CCLOG(@"map can't move");
+        }
+    }
+    
+}
+
+
+- (BOOL)isCollisionWithNextMarioPos:(CGPoint)nextMarioPos nextMapPos:(CGPoint)nextMapPos withMap:(CCTMXTiledMap*)map {
+    
+    CGPoint currPos = ccp(abs(map.position.x) + self.position.x, self.position.y);
+    CGPoint nextPos = ccp(abs(nextMapPos.x) + nextMarioPos.x, nextMarioPos.y);
+    currPos = [[CCDirector sharedDirector] convertToGL:currPos];
+    nextPos = [[CCDirector sharedDirector] convertToGL:nextPos];
+    
+    CCLOG(@"current = %@, next = %@, map = %@", NSStringFromCGPoint(currPos), NSStringFromCGPoint(nextPos), NSStringFromCGPoint(map.position));
+    
+    //移動先に関与するすべてのタイル(1~3個ある)
+    int adjustX = 0;
+    int adjustY = 0;
+    
+    if (currPos.x != nextPos.x) {
+        adjustX = (int)currPos.x > (int)nextPos.x ? 0 : 1;
+        //アンカー分半分ずらす
+        CGPoint p = ccp((int)(nextPos.x - kSpriteSize / 2)/ kSpriteSize + adjustX, (int)nextPos.y / kSpriteSize);
+        return [self isGroundAt:p withMap:map];
+    }
+    if (currPos.y != nextPos.y) {
+        adjustY = (int)currPos.y > (int)nextPos.y ? 0 : 1;
+        CGPoint p = ccp((int)nextPos.x / kSpriteSize, (int)nextPos.y / kSpriteSize + adjustY);
+        return [self isGroundAt:p withMap:map];
+    }
+    return NO;
+}
+
+- (BOOL)isGroundAt:(CGPoint)pt withMap:(CCTMXTiledMap*)map {
+    CCLOG(@"check pt=%@", NSStringFromCGPoint(pt));
+    
+    CCTMXLayer* layer = [map layerNamed:@"MainLayer"];
+    
+    int tileGID = [layer tileGIDAt:pt];
+    if (tileGID == 0) {
+        assert(0);
+    }
+    
+    if (_debugLastSprite){
+        _debugLastSprite.color = ccWHITE;
+    }
+    
+    NSDictionary* props = [map propertiesForGID:tileGID];
+    if (props) {
+        NSString* isGround = props[@"isGround"];
+        CCLOG(@"Ground = %@", isGround);
+        
+        _debugLastSprite = [layer tileAt:pt];
+        _debugLastSprite.color = ccRED;
+        return YES;
+        
+    } else {
+        CCLOG(@"not Ground");
+        return NO;
+    }
+}
+
+
 
 @end

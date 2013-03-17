@@ -27,4 +27,5 @@ typedef enum {
 - (void)startWalk;
 - (void)walking:(float)speedRatio;
 - (void)startJump;
+- (void)moveToXSpeedRatio:(CGFloat)xSpeedRatio toYSpeedRatio:(CGFloat)ySpeedRatio withMap:(CCTMXTiledMap*)map;
 @end
