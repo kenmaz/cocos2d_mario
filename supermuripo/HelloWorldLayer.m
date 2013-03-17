@@ -13,16 +13,20 @@
 
 static const int kTileMapNode = 1;
 static const int kMarioNode = 2;
+static const int kDebugNode = 3;
 
 static const int kMarioSpeed = 2;
-static const int kSpriteSize = 16;
+//static const int kSpriteSize = 16;
 
 #pragma mark - HelloWorldLayer
 
 // HelloWorldLayer implementation
 @implementation HelloWorldLayer {
     ZJoystick *_joystick;
-    CCSprite* _mario;
+    Mario* _mario;
+    
+    CCSprite* _debugLastSprite;
+    CCLabelTTF* _debugLabel;
 }
 
 // Helper class method that creates a Scene with the HelloWorldLayer as the only child.
@@ -50,8 +54,8 @@ static const int kSpriteSize = 16;
         [self addChild:tileMap z:-1 tag:kTileMapNode];
 
         //マリオ
-        Mario* mario = [[Mario alloc] initwithPosition:ccp([CCDirector sharedDirector].winSize.width / 2, kSpriteSize * 4.5)];
-        [self addChild:mario z:100 tag:kMarioNode];
+        _mario = [[Mario alloc] initwithPosition:ccp([CCDirector sharedDirector].winSize.width / 2, kSpriteSize * 4.5)];
+        [self addChild:_mario z:100 tag:kMarioNode];
         
         //ジョイスティック
         _joystick = [ZJoystick joystickNormalSpriteFile:@"cursor.png" selectedSpriteFile:@"cursor.png" controllerSpriteFile:@"Joystick_norm.png"];
@@ -66,7 +70,7 @@ static const int kSpriteSize = 16;
         float screenWidth = [CCDirector sharedDirector].winSize.width;
         jumpButton.position = ccp(screenWidth - jumpButton.contentSize.width / 2, jumpButton.contentSize.height / 2);
         
-        __block Mario* targetMario = mario;
+        __block Mario* targetMario = _mario;
         jumpButton.beginTouchBlock = ^{
             NSLog(@"begin");
             [targetMario jumpWithButtonTouchHolding:YES];
@@ -78,8 +82,21 @@ static const int kSpriteSize = 16;
         CCMenu *buttonBase = [CCMenu menuWithItems:jumpButton, nil];
         buttonBase.position = CGPointZero;
         [self addChild:buttonBase];
+        
+        //debug
+        _debugLabel = [[CCLabelTTF alloc] init];
+        _debugLabel.fontSize = 20;
+        _debugLabel.string = @"";
+        _debugLabel.position = ccp(240, 300);
+        _debugLabel.tag = kDebugNode;
+        [self addChild:_debugLabel];
+        
+        [self scheduleUpdate];
 	}
 	return self;
+}
+
+- (void)update:(ccTime)delta {
 }
 
 - (void)starButtonTapped:(id)sender {
@@ -103,7 +120,7 @@ static const int kSpriteSize = 16;
     return [[CCDirector sharedDirector] convertToGL:touchLocation];
 }
 
-#pragma mark GameKit delegate
+#pragma mark - GameKit delegate
 
 -(void) achievementViewControllerDidFinish:(GKAchievementViewController *)viewController
 {
@@ -133,7 +150,7 @@ static const int kSpriteSize = 16;
 
 //ジョイスティック操作
 -(void)joystickControlDidUpdate:(id)joystick toXSpeedRatio:(CGFloat)xSpeedRatio toYSpeedRatio:(CGFloat)ySpeedRatio {
-    
+        
     Mario* mario = (Mario*)[self getChildByTag:kMarioNode];
     CCNode* map = [self getChildByTag:kTileMapNode];
     
@@ -145,7 +162,7 @@ static const int kSpriteSize = 16;
     float mapRightEdgeX = -1 * (mapWidth - screenWidth);
     float mapLeftEdgeX = 0.0;
     
-    CCLOG(@"speed = %f, map.pos.x = %f", xSpeedRatio, map.position.x);
+    //CCLOG(@"speed = %f, map.pos.x = %f", xSpeedRatio, map.position.x);
     
     if ((map.position.x == mapLeftEdgeX  && xSpeedRatio < 0) ||             //map左端まで表示されていて,左に移動
         (map.position.x == mapLeftEdgeX  && mario.position.x < centerX) ||  //map左端まで表示されていて,マリオが左側にいる
@@ -159,12 +176,19 @@ static const int kSpriteSize = 16;
         if (0 <= mx && mx <= screenWidth) {
             NSLog(@"mx=%f, centerX=%f, mapX=%f", mx, centerX, map.position.x);
             
+            CGPoint nextPos;
+            
             if ((map.position.x == mapLeftEdgeX && 0 < xSpeedRatio && centerX < mx) ||
                 (map.position.x == mapRightEdgeX && xSpeedRatio < 0 && mx < centerX)) {
                 //センターを越えないように
-                mario.position = ccp(centerX, mario.position.y);
+                nextPos = ccp(centerX, mario.position.y);
             } else {
-                mario.position = ccp(mx, mario.position.y);
+                nextPos = ccp(mx, mario.position.y);
+            }
+            if ([self isCollisionWithNextMarioPos:nextPos nextMapPos:map.position] == NO) {
+                mario.position = nextPos;
+            } else {
+                CCLOG(@"map can't move");
             }
         }
     } else {
@@ -178,11 +202,77 @@ static const int kSpriteSize = 16;
         if (newMapX < mapRightEdgeX) {
             newMapX = mapRightEdgeX;
         }
-        map.position = ccp(newMapX, map.position.y);
-        CCLOG(@"map x:%f", map.position.x);
+        CGPoint nextPos = ccp(newMapX, map.position.y);
+        //CCLOG(@"map x:%f", map.position.x);
+        
+        if ([self isCollisionWithNextMarioPos:mario.position nextMapPos:nextPos] == NO) {
+            map.position = nextPos;
+        } else {
+            CCLOG(@"map can't move");
+        }
     }
 }
 
+- (BOOL)isCollisionWithNextMarioPos:(CGPoint)nextMarioPos nextMapPos:(CGPoint)nextMapPos {
+    //map上におけるマリオのpos
+    Mario* mario = (Mario*)[self getChildByTag:kMarioNode];
+    CCNode* map = [self getChildByTag:kTileMapNode];
+
+    
+    CGPoint currPos = ccp(abs(map.position.x) + mario.position.x, mario.position.y);
+    CGPoint nextPos = ccp(abs(nextMapPos.x) + nextMarioPos.x, nextMarioPos.y);
+    currPos = [[CCDirector sharedDirector] convertToGL:currPos];
+    nextPos = [[CCDirector sharedDirector] convertToGL:nextPos];
+    
+    CCLOG(@"current = %@, next = %@, map = %@", NSStringFromCGPoint(currPos), NSStringFromCGPoint(nextPos), NSStringFromCGPoint(map.position));
+
+    //移動先に関与するすべてのタイル(1~3個ある)
+    int adjustX = 0;
+    int adjustY = 0;
+    
+    if (currPos.x != nextPos.x) {
+        adjustX = (int)currPos.x > (int)nextPos.x ? 0 : 1;
+        //アンカー分半分ずらす
+        CGPoint p = ccp((int)(nextPos.x - kSpriteSize / 2)/ kSpriteSize + adjustX, (int)nextPos.y / kSpriteSize);
+        return [self isGroundAt:p];
+    }
+    if (currPos.y != nextPos.y) {
+        adjustY = (int)currPos.y > (int)nextPos.y ? 0 : 1;
+        CGPoint p = ccp((int)nextPos.x / kSpriteSize, (int)nextPos.y / kSpriteSize + adjustY);
+        return [self isGroundAt:p];
+    }
+    return NO;
+}
+
+- (BOOL)isGroundAt:(CGPoint)pt {
+    CCLOG(@"check pt=%@", NSStringFromCGPoint(pt));
+    
+    CCTMXTiledMap* map = (CCTMXTiledMap*)[self getChildByTag:kTileMapNode];
+    CCTMXLayer* layer = [map layerNamed:@"MainLayer"];
+    
+    int tileGID = [layer tileGIDAt:pt];
+    if (tileGID == 0) {
+        assert(0);
+    }
+    
+    if (_debugLastSprite){
+        _debugLastSprite.color = ccWHITE;
+    }
+
+    NSDictionary* props = [map propertiesForGID:tileGID];
+    if (props) {
+        NSString* isGround = props[@"isGround"];
+        CCLOG(@"Ground = %@", isGround);
+        
+        _debugLastSprite = [layer tileAt:pt];
+        _debugLastSprite.color = ccRED;
+        return YES;
+
+    } else {
+        CCLOG(@"not Ground");
+        return NO;
+    }
+}
 
 
 

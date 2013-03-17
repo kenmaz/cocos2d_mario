@@ -16,7 +16,6 @@ static int kActionTagStand = 0;
 static int kActionTagWalk = 1;
 static int kActionTagJump = 2;
 
-static const int kSpriteSize = 16;
 static const int kSpriteSpace = 1;
 
 //ジャンプした瞬間に加わる力

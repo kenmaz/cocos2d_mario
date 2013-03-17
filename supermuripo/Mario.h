@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "cocos2d.h"
 
+static const int kSpriteSize = 16;
+
 typedef enum {
     DirectionLeft,
     DirectionRight
