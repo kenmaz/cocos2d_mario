@@ -8,18 +8,22 @@
 
 
 #import <GameKit/GameKit.h>
-
-// When you import this file, you import all the cocos2d classes
 #import "cocos2d.h"
+#import "Mario.h"
 
-#import "ZJoystick.h"
+typedef enum {
+    GameSceneLayerTagGame = 1,
+    GameSceneLayerTagInput,
+} GameSceneLayerTags;
 
 // HelloWorldLayer
-@interface HelloWorldLayer : CCLayer <GKAchievementViewControllerDelegate, GKLeaderboardViewControllerDelegate, ZJoystickDelegate>
-{
-}
+@interface HelloWorldLayer : CCLayer <GKAchievementViewControllerDelegate, GKLeaderboardViewControllerDelegate>
+
+@property Mario* mario;
+@property CCTMXTiledMap* map;
 
 // returns a CCScene that contains the HelloWorldLayer as the only child
-+(CCScene *) scene;
++ (CCScene *) scene;
++ (HelloWorldLayer*)sharedInstance;
 
 @end

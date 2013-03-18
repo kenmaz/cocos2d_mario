@@ -14,13 +14,14 @@
 -(void) selected
 {
     [super selected];
-    self.beginTouchBlock();
+    self.active = YES;
 }
 
 -(void) unselected
 {
 	[super unselected];
-    self.endTouchBlock();
+    self.active = NO;
 }
+
 
 @end

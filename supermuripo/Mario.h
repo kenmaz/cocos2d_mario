@@ -19,9 +19,8 @@ typedef enum {
 @interface Mario : CCSprite
 
 @property Direction direction;
-@property CCTMXTiledMap* map;
 
-- (id)initwithPosition:(CGPoint)position;
+- (id)initWithPosition:(CGPoint)position;
 - (void)jumpWithButtonTouchHolding:(BOOL)buttonTouchHolding;
 
 - (void)startStand;
