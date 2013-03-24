@@ -10,6 +10,7 @@
 #import "AppDelegate.h"
 #import "JumpButton.h"
 #import "InputLayer.h"
+#import "Const.h"
 
 static const int kTileMapNode = 1;
 static const int kMarioNode = 2;
@@ -69,8 +70,30 @@ static HelloWorldLayer* instance;
 	return self;
 }
 
+#ifdef DEBUG_SHOW_TILE_BORDER
+- (void)draw {
+    ccDrawColor4F(0.5f, 0.5f, 0.5f, 1);
+    CGSize tileSize = self.map.tileSize;
+    CGSize mapSize = self.map.mapSize;
+    for (int y = 0; y < mapSize.height; y++) {
+        for (int x = 0; x < mapSize.width; x++) {
+            CGPoint beginPt = ccp(x * tileSize.width, y * tileSize.height);
+            
+            ccDrawLine(beginPt, ccpAdd(beginPt, ccp(tileSize.width, 0)));
+            ccDrawLine(beginPt, ccpAdd(beginPt, ccp(0, tileSize.height)));
+        }
+    }
+    
+    ccDrawColor4F(1, 1, 0, 1);
+    CGRect box = self.mario.boundingBox;
+    ccDrawRect(ccp(box.origin.x, box.origin.y),  ccp(box.origin.x + tileSize.width, box.origin.y + tileSize.height));
+    
+    ccDrawColor4F(1, 1, 1, 1);
+}
+#endif
+
 - (void)update:(ccTime)delta {
-    _debugLabel.string = [NSString stringWithFormat:@"mario=%@", NSStringFromCGPoint(self.mario.position)];
+//    _debugLabel.string = [NSString stringWithFormat:@"mario=%@", NSStringFromCGPoint(self.mario.position)];
 }
 
 - (CGPoint)locationFromTouches:(NSSet*)touches {

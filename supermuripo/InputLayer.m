@@ -53,7 +53,7 @@
 }
 
 - (void)starButtonTapped:(id)sender {
-    NSLog(@"button");
+    // do nothing
 }
 
 #pragma mark - //JoystickDelegate

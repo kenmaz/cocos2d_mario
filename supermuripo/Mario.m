@@ -8,6 +8,7 @@
 
 #import "Mario.h"
 #import "HelloWorldLayer.h"
+#import "Const.h"
 
 static NSString* kAnimationStand = @"mario_stand";
 static NSString* kAnimationWalk = @"mario_walk";
@@ -23,9 +24,13 @@ static const int kMarioSpeed = 2;
 static const int fps = 60;
 
 //ジャンプした瞬間に加わる力
-static const float kJumpForceDefault = 0.7;
+static const float kJumpForceDefault = 1.0;
+
 //ジャンプ中に加わる力
 static const float kJumpForceJumping = -0.7f;
+
+//ジャンプ力維持距離(ボタン押しっぱなしで2タイル分維持)
+static const int kJumpPower = 2;
 
 @implementation Mario {
     //1フレーム前のy位置
@@ -36,8 +41,7 @@ static const float kJumpForceJumping = -0.7f;
     BOOL _walking;
     BOOL _standing;
     
-    //スタート地点でのy位置
-    CGFloat _baseY;
+    CGPoint _jumpOriginPos;
     
     NSMutableArray* _debugCheckCollisionSprites;
     
@@ -47,7 +51,6 @@ static const float kJumpForceJumping = -0.7f;
 - (id)initWithPosition:(CGPoint)position {
     if ((self = [super initWithFile:@"mario.png"])) {
         self.position = position;
-        _baseY = position.y;
         
         _debugCheckCollisionSprites = [NSMutableArray array];
         
@@ -62,7 +65,7 @@ static const float kJumpForceJumping = -0.7f;
         NSMutableArray* frames = [NSMutableArray array];
         for (int i = 0; i < 5; i++) {
             CGRect rect = CGRectMake(kSpriteSize * i + kSpriteSpace * i, 0, kSpriteSize, kSpriteSize);
-            NSLog(@"%@", NSStringFromCGRect(rect));
+            CCLOG(@"%@", NSStringFromCGRect(rect));
             CCSpriteFrame* frame = [[CCSpriteFrame alloc] initWithTexture:texture rect:rect];
             [frames addObject:frame];
         }
@@ -128,9 +131,11 @@ static const float kJumpForceJumping = -0.7f;
 
 - (void)jumpWithButtonTouchHolding:(BOOL)buttonTouchHolding {
     if (buttonTouchHolding) {
-        [self startJump];
-        _jumping = YES;
-        
+        if (_jumping == NO) {
+            [self startJump];
+            _jumping = YES;
+            _jumpOriginPos = self.position;
+        }
     } else {
         //ボタンを離した時点でforceを変更
         if (_jumping) {
@@ -147,18 +152,20 @@ static const float kJumpForceJumping = -0.7f;
         elapseUpdate = 0;
     }
     
+#ifdef DEBUG_COLLISION_HIGHLIGHT
     for (CCSprite* sprite in _debugCheckCollisionSprites) {
         sprite.color = ccWHITE;
     }
     [_debugCheckCollisionSprites removeAllObjects];
+#endif
     
     CGFloat tempY = self.position.y;
 
     CCTMXTiledMap* map = [HelloWorldLayer sharedInstance].map;
     
     if (_jumping) {
-        //ジャンプボタン押しっぱなしであってもbaseY*2以上ジャンプしたら、forceは強制変化する
-        if (self.position.y > _baseY * 2) {
+        //ジャンプボタン押しっぱなしであっても2タイル分以上とんだら加速度無くす
+        if (self.position.y - _jumpOriginPos.y > map.tileSize.height * kJumpPower) {
             [self jumpWithButtonTouchHolding:NO];
         }
         //次フレームでのy位置
@@ -170,13 +177,13 @@ static const float kJumpForceJumping = -0.7f;
             CCLOG(@"collision! %@", NSStringFromCGPoint(self.position));
             
             if (self.position.y < newY) {
-                self.position = nextPos;
-                
-                self.position = ccp((int)(self.position.x / map.tileSize.width) * map.tileSize.width,
+                CCLOG(@"ジャンプ中に天井に衝突, 切りのいいところに移動");
+                /*
+                self.position = ccp((int)self.position.x,
                                     (int)(self.position.y / map.tileSize.height) * map.tileSize.height - (map.tileSize.height / 2));
+                */
                 _prevY = self.position.y;
                 
-                CCLOG(@"ジャンプ中に天井に衝突, 切りのいいところに移動");
             } else {
                 //地面・壁に衝突
                 if (_walking) {
@@ -187,7 +194,7 @@ static const float kJumpForceJumping = -0.7f;
                 _prevY = self.position.y;
                 
                 //切りのいいところに着地
-                self.position = ccp((int)(self.position.x / map.tileSize.width) * map.tileSize.width,
+                self.position = ccp((int)self.position.x,
                                     (int)(self.position.y / map.tileSize.height) * map.tileSize.height + (map.tileSize.height / 2));
                 
                 //self.position = ccp(nextPos.x, nextPos.y);
@@ -198,14 +205,14 @@ static const float kJumpForceJumping = -0.7f;
             self.position = nextPos;
             _prevY = tempY;
         }
-        CCLOG(@"%@", NSStringFromCGPoint(self.position));
+        CCLOG(@"JUMP: %@", NSStringFromCGPoint(self.position));
     } else {
         _prevY = tempY;
     }
 }
 
 - (void)moveToXSpeedRatio:(CGFloat)xSpeedRatio toYSpeedRatio:(CGFloat)ySpeedRatio {
-    
+
     [self walking:xSpeedRatio];
     
     CCTMXTiledMap* map = [HelloWorldLayer sharedInstance].map;
@@ -228,7 +235,7 @@ static const float kJumpForceJumping = -0.7f;
         
         //画面外にでないように
         if (0 <= mx && mx <= screenWidth) {
-            NSLog(@"mx=%f, centerX=%f, mapX=%f", mx, centerX, map.position.x);
+            CCLOG(@"mx=%f, centerX=%f, mapX=%f", mx, centerX, map.position.x);
             
             CGPoint nextPos;
             
@@ -266,7 +273,6 @@ static const float kJumpForceJumping = -0.7f;
             CCLOG(@"map can't move");
         }
     }
-    
 }
 
 //移動先ピクセルにかぶっているspriteを取得(最大で4コある), ひとつでも衝突したらNOを返して移動キャンセル(*)
@@ -282,10 +288,11 @@ static const float kJumpForceJumping = -0.7f;
     //四方向をチェック
     int halfSize = map.tileSize.width / 2;
     CGPoint checkPoints[4];
-    checkPoints[0] = ccp(nextPos.x + halfSize, nextPos.y + halfSize - 1);
-    checkPoints[1] = ccp(nextPos.x - halfSize, nextPos.y + halfSize - 1);
-    checkPoints[2] = ccp(nextPos.x + halfSize, nextPos.y - halfSize + 1);
-    checkPoints[3] = ccp(nextPos.x - halfSize, nextPos.y - halfSize + 1);
+    //
+    checkPoints[0] = ccp(nextPos.x + halfSize - 1, nextPos.y);
+    checkPoints[1] = ccp(nextPos.x - halfSize + 1, nextPos.y);
+    checkPoints[2] = ccp(nextPos.x, nextPos.y + halfSize - 1);
+    checkPoints[3] = ccp(nextPos.x, nextPos.y - halfSize + 1);
     
     CCLOG(@"checkPoints = {%@,%@,%@,%@}",
           NSStringFromCGPoint(checkPoints[0]),
@@ -296,7 +303,17 @@ static const float kJumpForceJumping = -0.7f;
     for (int i = 0; i < 4; i++) {
         CGPoint checkPoint = checkPoints[i];
         if ([self isGroundAt:checkPoint]) {
-            CCLOG(@"衝突! i=%d, pt=%@", i, NSStringFromCGPoint(checkPoint));
+            CGPoint orgPos = self.position;
+            
+            CCTMXTiledMap* map = [HelloWorldLayer sharedInstance].map;
+            CGPoint collisionMapPt = [self tilePointFromPixelPoint:checkPoint];
+
+            CCLOG(@"衝突! i=%d, pt=%@ orgPt=%@ nextPt=%@", i, NSStringFromCGPoint(checkPoint), NSStringFromCGPoint(orgPos), NSStringFromCGPoint(nextMarioPos));
+            if (i == 3) { //下向き衝突
+                CGPoint adjustMapPt = ccpAdd(collisionMapPt, ccp(0, -1));
+                int adjustY = 320 - (adjustMapPt.y * map.tileSize.height + (map.tileSize.height / 2));
+                self.position = ccp(self.position.x, adjustY);
+            }
             return YES;
         }
     }
@@ -318,15 +335,22 @@ static const float kJumpForceJumping = -0.7f;
     CGPoint tilePt = [self tilePointFromPixelPoint:pt];
     CCLOG(@"convert pixelPt:%@ to tilePt:%@", NSStringFromCGPoint(pt), NSStringFromCGPoint(tilePt));
 
+    if (tilePt.x < 0 || tilePt.y < 0 || map.mapSize.width -1 < tilePt.x || map.mapSize.height - 1 < tilePt.y ) {
+        CCLOG(@"場外");
+        return YES;
+    }
+    
     CCTMXLayer* layer = [map layerNamed:@"MainLayer"];
     int tileGID = [layer tileGIDAt:tilePt];
     if (tileGID == 0) {
         assert(0);
     }
     
+#ifdef DEBUG_COLLISION_HIGHLIGHT
     CCSprite* debugSprite = [layer tileAt:tilePt];
     debugSprite.color = ccRED;
     [_debugCheckCollisionSprites addObject:debugSprite];
+#endif
     
     NSDictionary* props = [map propertiesForGID:tileGID];
     if (props) {

@@ -153,6 +153,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8A11BBB816FDA900001AD31F /* Const.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Const.h; sourceTree = "<group>"; };
 		8A22D20716F20A8800536DDE /* supermuripo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = supermuripo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A22D20A16F20A8800536DDE /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		8A22D20C16F20A8800536DDE /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -507,6 +508,7 @@
 				8A568ACB16F42D1C00915D6F /* Mario.m */,
 				8A568ACD16F43C5F00915D6F /* JumpButton.h */,
 				8A568ACE16F43C5F00915D6F /* JumpButton.m */,
+				8A11BBB816FDA900001AD31F /* Const.h */,
 				8A22D21D16F20A8800536DDE /* Resources */,
 				8A22D23716F20A8800536DDE /* libs */,
 				8A22D39016F20A8A00536DDE /* Supporting Files */,
@@ -1110,7 +1112,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					DEBUG,
-					"COCOS2D_DEBUG=1",
+					"COCOS2D_DEBUG=0",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;

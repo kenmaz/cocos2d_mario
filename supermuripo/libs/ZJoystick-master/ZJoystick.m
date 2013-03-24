@@ -262,7 +262,7 @@ tControlQuadrant getQuadrantForPoint (CGPoint point) {
 	//this is when the touch is inside the joystick
 	CGFloat actualPointDistance = getDistanceBetweenTwoPoints(self.position, location);
 	
-    NSLog(@"Actual Distance - %f", actualPointDistance);
+    CCLOG(@"Actual Distance - %f", actualPointDistance);
     
 	//check if the touch point is within the joystick container's radius
 	if (actualPointDistance <= _joystickRadius){
